@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 # Exercise 2. Evaluer une expression / Evaluate an expression
-
 import argparse
 
 
