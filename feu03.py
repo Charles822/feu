@@ -7,10 +7,9 @@ import argparse
 import sys
 import threading
 
-threading.stack_size(67108864) # 64MB stack
-sys.setrecursionlimit(5000) # something real big
-                               # you actually hit the 64MB limit first
-                               # going by other answers, could just use 2**32-1
+threading.stack_size(67108864)
+sys.setrecursionlimit(5000)
+
 
 def file_exist(file):
 	try: 
@@ -51,6 +50,7 @@ def create_rows(file_content):
 		temp_row = []
 	return formatted_input
 
+
 def valid_board_format(sudoku_rows):
 	if len(sudoku_rows) == 9:
 		for item in sudoku_rows:
@@ -59,6 +59,7 @@ def valid_board_format(sudoku_rows):
 				exit()
 			else:
 				pass
+
 
 def create_columns(sudoku_rows):
 	sudoku_columns = []
@@ -112,7 +113,7 @@ def all_values(sudoku_columns):
 	return all_values
 
 
-
+# identify the remaining possibilities in a column
 def get_remaining_possibilities(column):
     possibilities = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
     for char in column:
@@ -121,6 +122,7 @@ def get_remaining_possibilities(column):
     return possibilities
 
 
+# here is the logic to update the solutions in a square
 def update_sudoku_squares(sudoku_squares, column_index, empty_case_index, case_solution): #here is the logic to update a square once we found the solution to a case
     if column_index in (0, 1, 2):
         if empty_case_index in (0, 1, 2):
@@ -169,6 +171,7 @@ def update_sudoku_squares(sudoku_squares, column_index, empty_case_index, case_s
             sudoku_squares[8][column_index] = case_solution
 
 
+# update the list of possibilities within a square
 def remove_items_from_square_remaining(square_remaining, items):
     for item in items:
         if item in square_remaining.copy():
@@ -176,6 +179,7 @@ def remove_items_from_square_remaining(square_remaining, items):
     return square_remaining
 
 
+# this function triggers the square, columns and rows update
 def update_solution_and_related_vars(solution, case_solution, sudoku_columns, column_index, position, sudoku_rows, sudoku_squares, remaining_possibilities):
     sudoku_columns[column_index][position] = case_solution
     sudoku_rows[position][column_index] = case_solution
@@ -184,6 +188,7 @@ def update_solution_and_related_vars(solution, case_solution, sudoku_columns, co
     square_remaining = remaining_possibilities.copy()
     solution = []
     return sudoku_columns, sudoku_rows, sudoku_squares, remaining_possibilities, square_remaining, solution
+
 
 # a more sophiticated way to find the solution if we can't find it via a simple check in the column, row and square
 def check_conditions_and_update(potential, sudoku_columns, column_index, position, sudoku_rows, square_remaining, remaining_possibilities, sudoku_squares):
@@ -358,6 +363,7 @@ def check_conditions_and_update(potential, sudoku_columns, column_index, positio
     return sudoku_columns, sudoku_rows, sudoku_squares, remaining_possibilities, square_remaining, solution, update_needed
 
 
+# Here is the function to check within a 3 x 3 square
 def check_square(remaining_possibilities, column_index, sudoku_columns, sudoku_squares, sudoku_rows): 
     square_remaining = remaining_possibilities.copy()
     solution = []
@@ -579,6 +585,7 @@ def check_square(remaining_possibilities, column_index, sudoku_columns, sudoku_s
 	                    		square_remaining = remaining_possibilities.copy()
 
 
+# Here is the main function to solve the sudoku, activating the necessary sub-functions
 def solve_sudoku(sudoku_rows, sudoku_columns, sudoku_squares):
     for column_index in range(0, 9):
     	remaining_possibilities = get_remaining_possibilities(sudoku_columns[column_index])
@@ -626,7 +633,9 @@ def main():
     sudoku_squares = format_squares(sudoku_squares)
     
     # Resolution
+    # Here is the main function to solve the sudoku, activating the necessary sub-functions
     sudoku_columns = solve_sudoku(sudoku_rows, sudoku_columns, sudoku_squares)
+    #reformatting before displaying the result
     completed_sudoku_rows = display_completed_sudoku(sudoku_columns)    
 
     # Display
@@ -634,11 +643,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
